@@ -5,23 +5,43 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.media.AudioAttributes
+import android.media.SoundPool
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
 import android.os.RemoteException
+import android.util.Log
 import com.example.clientapp.databinding.ActivityMainBinding
 import com.example.serviceapp.IMyAidlInterface
 
-//class MainActivity : Activity() {
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
-    var determined: Boolean = true
+    private lateinit var soundPool: SoundPool
+    private var determined: Boolean = true
+    private var zyoyaSound = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_main)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val audioAttributes = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_GAME)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+            .build()
+
+        soundPool = SoundPool.Builder()
+            .setAudioAttributes(audioAttributes)
+            .setMaxStreams(1)
+            .build()
+
+        zyoyaSound = soundPool.load(this, R.raw.zyoya, 1)
+
+        soundPool.setOnLoadCompleteListener { soundPool, sampleId, status ->
+            Log.d("debug", "sampleId=$sampleId")
+            Log.d("debug", "status=$status")
+        }
     }
 
     override fun onStart() {
@@ -45,11 +65,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.removeDesireButton.setOnClickListener {
-            binding.removeDesire.text = "よかったですね、これであなたの「" + binding.desireName.text + "」はなくなりました\nこのまま全ての煩悩が消えるといいですね"
+            soundPool.play(zyoyaSound, 1.0f, 1.0f, 0, 0, 1.0f)
+            if(determined == false){
+                binding.removeDesire.text = "よかったですね、これであなたの「" + binding.desireName.text + "」はなくなりました\nこのまま全ての煩悩が消えるといいですね"
 
-            binding.desireName.text = "煩悩の名前"
-            binding.desireMeaning.text = "煩悩の意味"
-            determined = true
+                binding.desireName.text = "煩悩の名前"
+                binding.desireMeaning.text = "煩悩の意味"
+                determined = true
+            }
         }
     }
 

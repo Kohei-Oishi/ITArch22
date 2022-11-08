@@ -25,25 +25,19 @@ class RemoteService : Service() {
     )
 
     override fun onBind(intent: Intent): IBinder {
-        // Return the interface
         return binder
     }
 
     private val binder = object : IMyAidlInterface.Stub() {
         override fun getDesiresMeaning(): String {
             return desireMap.keys.toList().random()
-//            return desireMap.keys.toList()
         }
 
         override fun getDesiresName(meaning: String): String {
             if (desireMap.keys.contains(meaning)){
                 return desireMap[meaning]!!
             }
-//            if (desireMap[meaning] != null){
-//                return desireMap[meaning]!!
-//            }
             return "そんな煩悩が存在しなかったということはあなたは善人である"
-//            return desireMap.keys.toList()
         }
     }
 
