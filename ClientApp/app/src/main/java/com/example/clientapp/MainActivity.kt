@@ -15,6 +15,7 @@ import com.example.serviceapp.IMyAidlInterface
 //class MainActivity : Activity() {
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
+    var determined: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,13 +30,26 @@ class MainActivity : AppCompatActivity() {
         it.setPackage("com.example.serviceapp")
         bindService(it, connection, Context.BIND_AUTO_CREATE)
 
-        binding.button.setOnClickListener {
-            try {
-                val desires = iMyAidlInterface?.desires
-                binding.desires.text = desires
-            }catch (e: RemoteException) {
-                e.printStackTrace()
+        binding.findDesireButton.setOnClickListener {
+            if (determined){
+                try {
+                    val desierMeaning = iMyAidlInterface?.desiresMeaning
+                    val desireName = iMyAidlInterface?.getDesiresName(desierMeaning)
+                    binding.desireName.text = desireName
+                    binding.desireMeaning.text = desierMeaning
+                }catch (e: RemoteException) {
+                    e.printStackTrace()
+                }
             }
+            determined = false
+        }
+
+        binding.removeDesireButton.setOnClickListener {
+            binding.removeDesire.text = "よかったですね、これであなたの「" + binding.desireName.text + "」はなくなりました\nこのまま全ての煩悩が消えるといいですね"
+
+            binding.desireName.text = "煩悩の名前"
+            binding.desireMeaning.text = "煩悩の意味"
+            determined = true
         }
     }
 

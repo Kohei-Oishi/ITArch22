@@ -8,5 +8,6 @@ interface IMyAidlInterface {
      * Demonstrates some basic types that you can use as parameters
      * and return values in AIDL.
      */
-    String getDesires();
+    String getDesiresMeaning();
+    String getDesiresName(String meaning);
 }

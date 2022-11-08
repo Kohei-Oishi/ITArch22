@@ -24,16 +24,26 @@ class RemoteService : Service() {
         "自分に対して恥じないこと" to "十纏無慚(じってんむざん)", "他者に恥じないこと" to "十纏無愧(じってんむき)", "ねたみ・嫉妬" to "十纏嫉(じってんしつ)", "物惜しみ" to "十纏慳 (じってんけん)", "後悔" to "十纏悔 (じってんけ)", "自由に身体が動かない" to "十纏眠 (じってんめん)", "心が騒がしくて静まらない" to "十纏掉挙 (じってんじょうこ)", "心が滅入ってふさぎ込む" to "十纏惘沈(じってんこんじん)", "憤怒" to "十纏忿(じってんふん)", "罪を隠そうとする" to "十纏覆 (じってんふく)",
     )
 
-    var desire: String = ""
-
     override fun onBind(intent: Intent): IBinder {
         // Return the interface
         return binder
     }
 
     private val binder = object : IMyAidlInterface.Stub() {
-        override fun getDesires(): String {
-            return desire
+        override fun getDesiresMeaning(): String {
+            return desireMap.keys.toList().random()
+//            return desireMap.keys.toList()
+        }
+
+        override fun getDesiresName(meaning: String): String {
+            if (desireMap.keys.contains(meaning)){
+                return desireMap[meaning]!!
+            }
+//            if (desireMap[meaning] != null){
+//                return desireMap[meaning]!!
+//            }
+            return "そんな煩悩が存在しなかったということはあなたは善人である"
+//            return desireMap.keys.toList()
         }
     }
 
