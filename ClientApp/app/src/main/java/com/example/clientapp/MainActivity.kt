@@ -8,7 +8,9 @@ import android.content.ServiceConnection
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
+import android.os.RemoteException
 import com.example.clientapp.databinding.ActivityMainBinding
+import com.example.serviceapp.IMyAidlInterface
 
 //class MainActivity : Activity() {
 class MainActivity : AppCompatActivity() {
@@ -16,14 +18,25 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+//        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
     }
 
     override fun onStart() {
         super.onStart()
         val it = Intent("MyRemoteService")
         it.setPackage("com.example.serviceapp")
-//        bindService(it, connection, Context.BIND_AUTO_CREATE)
+        bindService(it, connection, Context.BIND_AUTO_CREATE)
+
+        binding.button.setOnClickListener {
+            try {
+                val desires = iMyAidlInterface?.desires
+                binding.desires.text = desires
+            }catch (e: RemoteException) {
+                e.printStackTrace()
+            }
+        }
     }
 
     private var iMyAidlInterface: IMyAidlInterface? = null
